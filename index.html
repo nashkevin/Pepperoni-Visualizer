@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html>
+<title>Pepperoni Visualizer</title>
 
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1>Pepperoni Visualizer</h1>
+  <div class="grid-container">
+    <div class="grid-child">
+      <div class="sliders">
+        <div class="range-label">
+          <label>Pizza Size</label>
+          <input type="range" min="0.05" max="0.45" value="0.25" step="0.0001" oninput="drawPizza()" id="pizza-size" />
+        </div>
+        <div class="range-label">
+          <label>Pepperoni Count</label>
+          <input type="range" min="1" max="10" value="1" id="pepperoni-count" />
+        </div>
+        <div class="range-label">
+          <label>Pepperoni Size</label>
+          <input type="range" min="1" max="10" value="1" step="0.01" id="pepperoni-size" />
+        </div>
+      </div>
+    </div>
+    <div class="grid-child">
+      <div class="visualizer" id="visualizer">
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
+  </div>
+  <div id="info">
+    <span id="version">v0.0.1</span>
+    <span>github.com/nashkevin</span>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>

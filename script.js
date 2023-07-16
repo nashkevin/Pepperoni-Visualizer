@@ -18,6 +18,7 @@ var originY;
 var pizzaOuterRadius;
 var pizzaInnerRadius;
 var pepperoniRadius;
+var ringCount;
 
 window.onresize = resizeWindow;
 
@@ -41,7 +42,8 @@ function drawPizza() {
 }
 
 function drawAllPepperoni() {
-  pepperoniRadius = canvas.width * 0.2 * pepperoniSize.valueAsNumber
+  pepperoniRadius = canvas.width * 0.2 * pepperoniSize.valueAsNumber;
+  ringCount = Math.trunc(pizzaInnerRadius / (pepperoniRadius * 2));
   let theta = TAU / pepperoniCount.valueAsNumber;
 
   if (pepperoniCount.valueAsNumber == 1)  {
@@ -49,11 +51,18 @@ function drawAllPepperoni() {
   }
   else
   {
+    let test = pizzaInnerRadius / ringCount;
+    let ringCounter = 1;
     for (let i = 0; i < pepperoniCount.valueAsNumber; i++) {
-      let x = pizzaInnerRadius * 0.5 * Math.cos(theta * i);
-      let y = pizzaInnerRadius * 0.5 * Math.sin(theta * i);
+      let r = test * ringCounter++;
+      let x = r * Math.cos(theta * i);
+      let y = r * Math.sin(theta * i);
       drawPepperoni(x, y);
       // drawDebugDot(x, y);
+      if (ringCount < ringCounter)
+      {
+        ringCounter = 1;
+      }
     }
   }
 }

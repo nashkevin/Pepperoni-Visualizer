@@ -22,10 +22,35 @@ var ringCount;
 
 window.onresize = resizeWindow;
 
-function drawPizza() {
+function pizzaSizeInput() {
+  updateDependentVars()
+  if (pizzaInnerRadius < pepperoniRadius)
+  {
+    pepperoniSize.value = pizzaInnerRadius / (0.2 * canvas.width);
+  }
+  drawPizza();
+}
+
+function pepperoniCountInput() {
+  drawPizza();
+}
+
+function pepperoniSizeInput() {
+  updateDependentVars()
+  if (pizzaInnerRadius < pepperoniRadius)
+  {
+    pizzaSize.value = pepperoniRadius / (0.9 * canvas.width);
+  }
+  drawPizza();
+}
+
+function updateDependentVars() {
   pizzaOuterRadius = canvas.width * pizzaSize.valueAsNumber;
   pizzaInnerRadius = pizzaOuterRadius * 0.9;
+  pepperoniRadius = canvas.width * 0.2 * pepperoniSize.valueAsNumber;
+}
 
+function drawPizza() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.beginPath();
@@ -42,19 +67,17 @@ function drawPizza() {
 }
 
 function drawAllPepperoni() {
-  pepperoniRadius = canvas.width * 0.2 * pepperoniSize.valueAsNumber;
   ringCount = Math.trunc(pizzaInnerRadius / (pepperoniRadius * 2));
   let theta = TAU / pepperoniCount.valueAsNumber;
 
-  if (pepperoniCount.valueAsNumber == 1)  {
-    drawPepperoni(0, 0);
-  }
-  else
+  if (0 < pepperoniCount.valueAsNumber)
   {
+    drawPepperoni(0, 0);
+
     let test = pizzaInnerRadius / ringCount;
     let ringCounter = 1;
-    for (let i = 0; i < pepperoniCount.valueAsNumber; i++) {
-      let r = test * ringCounter++;
+    for (let i = 1; i < pepperoniCount.valueAsNumber; i++) {
+      let r = test * ringCounter++ - pepperoniRadius;
       let x = r * Math.cos(theta * i);
       let y = r * Math.sin(theta * i);
       drawPepperoni(x, y);
@@ -75,7 +98,12 @@ function drawDebugDot(x, y) {
 function drawPepperoni(x, y) {
   ctx.beginPath();
   ctx.arc(originX + x, originY + y, pepperoniRadius, 0, TAU);
-  ctx.fillStyle = "red";
+  ctx.fillStyle = "#880D1A";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(originX + x, originY + y, pepperoniRadius * 0.9, 0, TAU);
+  ctx.fillStyle = "#AF0D1A";
   ctx.fill();
 }
 
@@ -88,6 +116,7 @@ function resizeWindow() {
   originX = canvas.width * 0.5;
   originY = canvas.height * 0.5;
 
+  updateDependentVars();
   drawPizza();
 }
 

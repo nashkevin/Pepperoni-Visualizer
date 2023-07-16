@@ -38,3 +38,9 @@ three parameters:
 * Pepperoni size
 
 though I may add further complexity in the future.
+
+## To-Do
+
+* Finish placement algorithm
+* Make mobile friendly
+* Report parameter values with units

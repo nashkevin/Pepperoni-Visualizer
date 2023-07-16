@@ -1,19 +1,45 @@
+:root {
+  --user-primary-color: #2B2A33;
+  --user-secondary-color: #FBFBFE;
+  --user-tertiary-color: #42414D;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --user-primary-color: #2B2A33;
+    --user-secondary-color: #FBFBFE;
+    --user-tertiary-color: #42414D;
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root {
+      --user-primary-color: #FBFBFE;
+      --user-secondary-color: #2B2A33;
+      --user-tertiary-color: #E4E4E4;
+  }
+} */
+
 body {
-  background-color: #2B2A33;
-  color: #FBFBFE;
+  background-color: var(--user-primary-color);
+  color: var(--user-secondary-color);
   font-family: system-ui;
   margin: 0;
   padding: 0;
-  min-height: 350px;
 }
 
 h1 {
   text-align: center;
   user-select: none;
+  background-size: 100%;
+  background-color: var(--user-tertiary-color);
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .grid-container {
-  background-color: #2B2A33;
+  background-color: var(--user-primary-color);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5%;
@@ -24,11 +50,14 @@ h1 {
 }
 
 .sliders {
-  background-color: #2B2A33;
+  margin: 0 0 0 0;
+  background-color: var(--user-primary-color);
+  max-width: 350px;
   display: grid;
   position: relative;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
   z-index: 2;
 }
 
@@ -43,7 +72,7 @@ h1 {
 }
 
 .visualizer {
-  border: 3px solid #42414D;
+  border: 3px solid var(--user-tertiary-color);
   width: 100%;
   aspect-ratio: 1;
   position: relative;
@@ -58,7 +87,7 @@ h1 {
 }
 
 #info {
-  color: #42414D;
+  color: var(--user-tertiary-color);
   width: 100%;
   position: fixed;
   bottom: 0px;

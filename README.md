@@ -28,7 +28,7 @@ imported libraries or templates.
 
 ## Using It
 
-Using [Pepperoni Visualizer](https://nashkevin.github.io/pepperoni-visualizer/)
+Using [Pepperoni Visualizer](https://nashkevin.github.io/Pepperoni-Visualizer/)
 is quite simple. You can move the sliders to adjust the parameters of your
 pizza, and the preview will update automatically. The initial design defined
 three parameters:

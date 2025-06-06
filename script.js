@@ -1,4 +1,8 @@
 /** @type {HTMLInputElement} */
+const debugValue1 = document.getElementById("debug-value-1");
+/** @type {HTMLInputElement} */
+const debugValue2 = document.getElementById("debug-value-2");
+/** @type {HTMLInputElement} */
 const pizzaSize = document.getElementById("pizza-size");
 /** @type {HTMLInputElement} */
 const pepperoniCount = document.getElementById("pepperoni-count");
@@ -64,6 +68,7 @@ function drawPizza() {
   ctx.fill();
 
   drawAllPepperoni();
+  calculate();
 }
 
 function drawAllPepperoni() {
@@ -118,6 +123,19 @@ function resizeWindow() {
 
   updateDependentVars();
   drawPizza();
+}
+
+function calculate() {
+  let pizzaRadius = 10;
+  let pepperoniRadius = 1;
+
+  let radiusDifference = pizzaRadius - pepperoniRadius;
+
+  let count1 = Math.floor((TAU * radiusDifference) / (2 * pepperoniRadius));
+  let count2 = Math.floor(Math.PI * (pizzaRadius - pepperoniRadius) / pepperoniRadius);
+
+  debugValue1.innerText = count1;
+  debugValue2.innerText = count2;
 }
 
 resizeWindow();

@@ -43,6 +43,11 @@ a, a:active, a:hover, a:link, a:visited {
   text-decoration: none;
 }
 
+input {
+  background-color: var(--user-tertiary-color);
+  color: var(--user-secondary-color);
+}
+
 .grid-container {
   background-color: var(--user-primary-color);
   display: grid;
@@ -57,6 +62,7 @@ a, a:active, a:hover, a:link, a:visited {
 .sliders {
   margin: 0 0 0 0;
   background-color: var(--user-primary-color);
+  accent-color: #FE7836;
   display: grid;
   position: relative;
   align-content: center;
@@ -65,12 +71,19 @@ a, a:active, a:hover, a:link, a:visited {
 
 .range-label {
   display: grid;
-  grid-template-columns: 1fr;
-  accent-color: #FE7836;
+  grid-template-columns: 1fr 1fr;
   user-select: none;
-  margin-bottom: 10px;
-  margin-top: 10px;
   z-index: 1;
+}
+
+.unit-value {
+  /* display: grid;
+  grid-template-columns: auto 1fr;
+  text-align: right; */
+  pointer-events: none;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .visualizer {

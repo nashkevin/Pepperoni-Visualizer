@@ -3,6 +3,8 @@ const pizzaSizeHtml = document.getElementById("pizza-size");
 /** @type {HTMLInputElement} */
 const pepperoniCountHtml = document.getElementById("pepperoni-count");
 /** @type {HTMLInputElement} */
+const pepperoniCountBoxHtml = document.getElementById("pepperoni-count-box");
+/** @type {HTMLInputElement} */
 const pepperoniSizeHtml = document.getElementById("pepperoni-size");
 
 const visualizerHtml = document.getElementById("visualizer");
@@ -43,26 +45,39 @@ class PointPolar {
 }
 
 class Ring {
-  radius = 0;
-  count = 0;
-  capacity = 0;
-  quota = 0;
+  radius = -1;
+  count = -1;
+  capacity = -1;
+  quota = -1;
 
   constructor(radius) {
     this.radius = radius;
   }
 
-  // toggling offset prevents stacking in a straight line
-  getPoints(isOffset) {
-    !!isOffset;
-    let points = [];
-    let workingCount = 0 < this.quota ? this.quota : (0 < this.count ? this.count : this.capacity);
-    let theta = TAU / Math.floor(workingCount);
+  getPointsByCapacity(isOffset) {
+    return this.#getPoints(this.capacity, !!isOffset);
+  }
 
+  getPointsByCount(isOffset) {
+    return this.#getPoints(this.count, !!isOffset);
+  }
+
+  getPointsByQuota(isOffset) {
+    return this.#getPoints(this.quota, !!isOffset);
+  }
+
+  // toggling offset prevents stacking in a straight line
+  #getPoints(workingCount, isOffset) {
+    let points = [];
+    
+    if (workingCount < 1) {
+      return [];
+    }
     if (workingCount == 1) {
       return [new PointCartesian(0, 0)];
     }
 
+    let theta = TAU / Math.floor(workingCount);
     for (let i = isOffset ? 0.5 : 0; i < workingCount; i++) {
       points.push(new PointPolar(this.radius, (theta * i)).getCartesian());
     }
@@ -83,11 +98,13 @@ function pizzaSizeInput() {
     pepperoniSizeHtml.value = pizzaRadius / (0.2 * canvas.width);
   }
   drawPizza();
+  updateCountDisplay();
 }
 
 function pepperoniCountInput() {
   updateDependentVars();
   drawPizza();
+  updateCountDisplay();
 }
 
 function pepperoniSizeInput() {
@@ -96,6 +113,7 @@ function pepperoniSizeInput() {
     pizzaSizeHtml.value = pepperoniRadius / (0.9 * canvas.width);
   }
   drawPizza();
+  updateCountDisplay();
 }
 
 // TODO - this no longer handles most cases, revise clamping
@@ -103,6 +121,17 @@ function updateDependentVars() {
   pizzaRadius = canvas.width * pizzaSizeHtml.valueAsNumber * 0.9;
   pepperoniRadius = canvas.width * 0.2 * pepperoniSizeHtml.valueAsNumber;
   pepperoniCount = pepperoniCountHtml.valueAsNumber;
+}
+
+function updateCountDisplay() {
+  // TODO - allowing off-by-one here is cheating, need to figure out source of discrepancy
+  // if (2 < pepperoniCountHtml.valueAsNumber - points.length) {
+  //   pepperoniCountBoxHtml.value = pepperoniCountHtml.valueAsNumber + " (" + points.length + ")";
+  // } else {
+  //   pepperoniCountBoxHtml.value = points.length;
+  // }
+  pepperoniCountBoxHtml.value = points.length;
+  pepperoniCountHtml.value = points.length;
 }
 
 function drawPizza() {
@@ -176,7 +205,8 @@ function fillPepperoni() {
     // approximate capacity by pepperoni diameters per ring circumference
     ring.capacity = Math.floor((TAU * ringRadius) / (2 * pepperoniRadius));
     // verify capacity with an overlap check
-    if (2 <= ring.capacity && Math.hypot(ring.getPoints()[1].x - ring.getPoints()[0].x, ring.getPoints()[1].y - ring.getPoints()[0].y) < 2 * pepperoniRadius) {
+    const testPoints = ring.getPointsByCapacity();
+    if (2 <= ring.capacity && Math.hypot(testPoints[1].x - testPoints[0].x, testPoints[1].y - testPoints[0].y) < 2 * pepperoniRadius) {
       ring.capacity--;
     }
     if (0 < ring.capacity) {
@@ -207,10 +237,19 @@ function fillPepperoni() {
   }
 
   // redistribute counts to keep ring fill roughly even
+  let remainders = 0;
   for (let i = 0; i < rings.length; i++) {
     // TODO - this will be off by one for even splits (e.g. 7.5 + 4.5 != 8 + 5)
-    rings[i].quota = Math.round(rings[i].capacity / capacityOfRingsInUse * countOfRingsInUse);
-    points = points.concat(rings[i].getPoints(i % 2));
+    let quota = rings[i].capacity / capacityOfRingsInUse * countOfRingsInUse;
+    remainders += quota % 1;
+    rings[i].quota = Math.floor(quota);
+    points = points.concat(rings[i].getPointsByQuota(i % 2));
+  }
+  if (pepperoniCount < points.length) {
+    console.log("OFF BY ONE");
+    for (let i = 0; i < rings.length; i++) {
+      rings[i].getPointsByQuota(i % 2);
+    }
   }
 
   /* DEBUG */

@@ -45,13 +45,17 @@ class PointPolar {
 }
 
 class Ring {
-  radius = -1;
-  count = -1;
-  capacity = -1;
-  quota = -1;
+  radius = 0;
+  count = 0;
+  capacity = 0;
+  quota = 0;
 
   constructor(radius) {
     this.radius = radius;
+  }
+
+  getFill() {
+    return this.quota / this.capacity;
   }
 
   getPointsByCapacity(isOffset) {
@@ -132,6 +136,12 @@ function updateCountDisplay() {
   // }
   pepperoniCountBoxHtml.value = points.length;
   pepperoniCountHtml.value = points.length;
+}
+
+function updateCount(n) {
+  pepperoniCount = n;
+  pepperoniCountBoxHtml.value = n;
+  pepperoniCountHtml.value = n;
 }
 
 function drawPizza() {
@@ -228,6 +238,9 @@ function fillPepperoni() {
     countOfRingsInUse += rings[i].count;
   }
 
+  // TODO - necessary for slider reducing pizza size, still... needs double checking
+  updateCount(pepperoniCount - unassignedPepperoniCount);
+
   // distribute radial space among rings
   if (0 < rings.length && 0 < rings[0].radius) {
     let outwardScale = (pizzaRadius - pepperoniRadius) / rings[0].radius;
@@ -236,20 +249,28 @@ function fillPepperoni() {
     }
   }
 
-  // redistribute counts to keep ring fill roughly even
-  let remainders = 0;
+  // redistribute pepperoni to keep ring fill roughly even
+  let remainderSum = 0;
   for (let i = 0; i < rings.length; i++) {
-    // TODO - this will be off by one for even splits (e.g. 7.5 + 4.5 != 8 + 5)
     let quota = rings[i].capacity / capacityOfRingsInUse * countOfRingsInUse;
-    remainders += quota % 1;
+    remainderSum += quota % 1;
     rings[i].quota = Math.floor(quota);
-    points = points.concat(rings[i].getPointsByQuota(i % 2));
   }
-  if (pepperoniCount < points.length) {
-    console.log("OFF BY ONE");
+  // redistribute remainder to least-filled rings
+  while (0 < Math.round(remainderSum)) { // always a whole number, rounding needed to correct float errors
+    let minFillIndex = 0;
     for (let i = 0; i < rings.length; i++) {
-      rings[i].getPointsByQuota(i % 2);
+      if (rings[i].getFill() < rings[minFillIndex].getFill()) {
+        minFillIndex = i;
+      }
     }
+    rings[minFillIndex].quota++;
+    remainderSum--;
+  }
+  for (let i = 0; i < rings.length; i++) {
+    let newPoints = rings[i].getPointsByQuota(i % 2);
+    rings[i].count = newPoints.length;
+    points = points.concat(newPoints);
   }
 
   /* DEBUG */

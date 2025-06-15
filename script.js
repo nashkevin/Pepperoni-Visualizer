@@ -56,7 +56,7 @@ class Ring {
   getPoints(isOffset) {
     !!isOffset;
     let points = [];
-    let workingCount = this.quota < 1 ? this.count : this.quota;    
+    let workingCount = 0 < this.quota ? this.quota : (0 < this.count ? this.count : this.capacity);
     let theta = TAU / Math.floor(workingCount);
 
     if (workingCount == 1) {
@@ -170,19 +170,18 @@ function resizeWindow() {
 function fillPepperoni() {
   let rings = [];
 
-  // TODO - revise algorithm to eliminate this special case
-  // if (pepperoniCount == 1) {
-  //   points.push(new PointCartesian(0, 0));
-  //   return rings;
-  // }
-
   // define rings from outer edge inward
-  for (let ringRadius = pizzaRadius - pepperoniRadius; pepperoniRadius / 2 <= ringRadius; ringRadius -= (2 * pepperoniRadius)) {
+  for (let ringRadius = pizzaRadius - pepperoniRadius; 0 < ringRadius; ringRadius -= (2 * pepperoniRadius)) {
     const ring = new Ring(ringRadius);
     // approximate capacity by pepperoni diameters per ring circumference
-    // TODO - overestimates on the low end (<5 or so), add a second check
     ring.capacity = Math.floor((TAU * ringRadius) / (2 * pepperoniRadius));
-    rings.push(ring);
+    // verify capacity with an overlap check
+    if (2 <= ring.capacity && Math.hypot(ring.getPoints()[1].x - ring.getPoints()[0].x, ring.getPoints()[1].y - ring.getPoints()[0].y) < 2 * pepperoniRadius) {
+      ring.capacity--;
+    }
+    if (0 < ring.capacity) {
+      rings.push(ring);
+    }    
   }
   
   let capacityOfRingsInUse = 0;

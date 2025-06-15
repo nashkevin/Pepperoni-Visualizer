@@ -57,12 +57,9 @@ a, a:active, a:hover, a:link, a:visited {
 .sliders {
   margin: 0 0 0 0;
   background-color: var(--user-primary-color);
-  max-width: 350px;
   display: grid;
   position: relative;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  align-content: center;
   z-index: 2;
 }
 

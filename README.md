@@ -41,6 +41,7 @@ though I may add further complexity in the future.
 
 ## To-Do
 
-* Finish placement algorithm
-* Make mobile friendly
+* Fix "flickering" ring distribution
+* Allow pepperoni count increases to adjust other sliders as needed to fit
 * Report parameter values with units
+* Make mobile friendly

@@ -1,11 +1,15 @@
 /** @type {HTMLInputElement} */
 const pizzaSizeHtml = document.getElementById("pizza-size");
 /** @type {HTMLInputElement} */
+const pizzaSizeBoxHtml = document.getElementById("pizza-size-box");
+/** @type {HTMLInputElement} */
 const pepperoniCountHtml = document.getElementById("pepperoni-count");
 /** @type {HTMLInputElement} */
 const pepperoniCountBoxHtml = document.getElementById("pepperoni-count-box");
 /** @type {HTMLInputElement} */
 const pepperoniSizeHtml = document.getElementById("pepperoni-size");
+/** @type {HTMLInputElement} */
+const pepperoniSizeBoxHtml = document.getElementById("pepperoni-size-box");
 
 const visualizerHtml = document.getElementById("visualizer");
 
@@ -123,7 +127,9 @@ function pepperoniSizeInput() {
 // TODO - this no longer handles most cases, revise clamping
 function updateDependentVars() {
   pizzaRadius = canvas.width * pizzaSizeHtml.valueAsNumber * 0.9;
+  pizzaSizeBoxHtml.value = Math.round(pizzaSizeHtml.valueAsNumber * 40 * 10) / 10;
   pepperoniRadius = canvas.width * 0.2 * pepperoniSizeHtml.valueAsNumber;
+  pepperoniSizeBoxHtml.value = Math.round(pepperoniSizeHtml.valueAsNumber * 40 * 0.2 * 10) / 10;
   pepperoniCount = pepperoniCountHtml.valueAsNumber;
 }
 

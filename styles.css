@@ -48,6 +48,12 @@ input {
   color: var(--user-secondary-color);
 }
 
+button {
+  background: none;
+  border: none;
+  font-size: 1em;
+}
+
 .grid-container {
   background-color: var(--user-primary-color);
   display: grid;

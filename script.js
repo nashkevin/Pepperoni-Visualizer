@@ -17,8 +17,8 @@ const visualizerHtml = document.getElementById("visualizer");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const isFunMode = false;
-const isDebugMode = false;
+var isFunMode = false;
+var isDebugMode = false;
 
 const pizzaBaseColor     = "#FCBD50";
 const pizzaCrustColor    = "#DA7E1F";
@@ -99,15 +99,16 @@ var originY;
 var pizzaRadius; // excludes crust
 var pepperoniRadius;
 var pepperoniCount;
+var preferredPepperoniCount;
 var points = [];
 var pepperoniColors = [];
 
 function init() {
-  for (let i = 0; i < pepperoniCountHtml.max; i++) {
-    pepperoniColors.push(isFunMode ? getRandomColorPair() : getPepperoniColorPair());
-  }
+  preferredPepperoniCount = pepperoniCountHtml.valueAsNumber;
+  populateColors();
   resizeWindow();
 }
+
 
 function pizzaSizeInput() {
   updateDependentVars();
@@ -118,7 +119,14 @@ function pizzaSizeInput() {
   updateCountDisplay();
 }
 
+// special handler for clicks because clamping may prevent input,
+// masking user intent
+function pepperoniCountClick() {
+  preferredPepperoniCount = pepperoniCountHtml.valueAsNumber;
+}
+
 function pepperoniCountInput() {
+  preferredPepperoniCount = pepperoniCountHtml.valueAsNumber;
   updateDependentVars();
   drawPizza();
   updateCountDisplay();
@@ -133,13 +141,27 @@ function pepperoniSizeInput() {
   updateCountDisplay();
 }
 
+function toggleFunMode() {
+  isFunMode = !isFunMode;
+  populateColors();
+  drawPizza();
+}
+
+function populateColors() {
+  pepperoniColors.length = 0;
+  for (let i = 0; i < pepperoniCountHtml.max; i++) {
+    pepperoniColors.push(isFunMode ? getRandomColorPair() : getPepperoniColorPair());
+  }
+}
+
+
 // TODO - this no longer handles most cases, revise clamping
 function updateDependentVars() {
   pizzaRadius = canvas.width * pizzaSizeHtml.valueAsNumber * 0.9;
   pizzaSizeBoxHtml.value = Math.round(pizzaSizeHtml.valueAsNumber * 40 * 10) / 10;
   pepperoniRadius = canvas.width * 0.2 * pepperoniSizeHtml.valueAsNumber;
   pepperoniSizeBoxHtml.value = Math.round(pepperoniSizeHtml.valueAsNumber * 40 * 0.2 * 10) / 10;
-  pepperoniCount = pepperoniCountHtml.valueAsNumber;
+  pepperoniCount = preferredPepperoniCount;
 }
 
 function updateCountDisplay() {

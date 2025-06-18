@@ -7,7 +7,7 @@
 </head>
 
 <body onload="init()">
-  <h1>Pepperoni Visualizer 🍕</h1>
+  <h1>Pepperoni Visualizer<button onclick="toggleFunMode()">🍕</button></h1>
   <div class="grid-container">
     <div class="grid-child" id="grid-left">
       <div class="sliders">
@@ -26,7 +26,7 @@
             <label>pepp.</label>
           </div>
         </div>
-        <input type="range" min="1" max="375" value="15" step="1" oninput="pepperoniCountInput()" id="pepperoni-count" />
+        <input type="range" min="1" max="375" value="15" step="1" oninput="pepperoniCountInput()" onclick="pepperoniCountClick()" id="pepperoni-count" />
         <div class="range-label">
           <label>Pepperoni Size</label>
           <div class="unit-value">
@@ -45,7 +45,7 @@
     </div>
   </div>
   <div id="info">
-    <span id="version">v0.0.6</span>
+    <span id="version">v0.0.7</span>
     <a href="https://github.com/nashkevin">github.com/nashkevin</a>
   </div>
   <script src="script.js"></script>

@@ -288,6 +288,13 @@ function fillPepperoni() {
     points = points.concat(newPoints);
   }
 
+  // we're barricaded against no-pepperoni-fit scenarios,
+  // so if we didn't generate any, it's a failing of the algorithm (TODO)
+  if (points.length < 1) {
+    pepperoniCount = 1;
+    points.push(new PointCartesian(0, 0));
+  }
+
   /* DEBUG */
   return rings;
   /* DEBUG */

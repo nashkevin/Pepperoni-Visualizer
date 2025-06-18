@@ -59,6 +59,11 @@ input {
   z-index: 3;
 }
 
+.grid-child {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .sliders {
   margin: 0 0 0 0;
   background-color: var(--user-primary-color);
@@ -71,6 +76,7 @@ input {
 
 .range-label {
   display: grid;
+  margin-top: 2.5em;
   grid-template-columns: 1fr 1fr;
   user-select: none;
   z-index: 1;

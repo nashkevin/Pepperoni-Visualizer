@@ -17,10 +17,11 @@ const visualizerHtml = document.getElementById("visualizer");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+const isFunMode = false;
+const isDebugMode = false;
+
 const pizzaBaseColor     = "#FCBD50";
 const pizzaCrustColor    = "#DA7E1F";
-const pepperoniBaseColor = "#AF0D1A";
-const pepperoniTrimColor = "#880D1A";
 
 const TAU = 2 * Math.PI;
 
@@ -99,6 +100,14 @@ var pizzaRadius; // excludes crust
 var pepperoniRadius;
 var pepperoniCount;
 var points = [];
+var pepperoniColors = [];
+
+function init() {
+  for (let i = 0; i < pepperoniCountHtml.max; i++) {
+    pepperoniColors.push(isFunMode ? getRandomColorPair() : getPepperoniColorPair());
+  }
+  resizeWindow();
+}
 
 function pizzaSizeInput() {
   updateDependentVars();
@@ -173,7 +182,7 @@ function drawPizza() {
 function drawAllPepperoni() {
   let rings = fillPepperoni();
   for (let i = 0; i < points.length; i++) {
-    drawPepperoni(points[i].x, points[i].y);    
+    drawPepperoni(points[i].x, points[i].y, i);
   }
   /* DEBUG */
   // for (let i = 0; i < rings.length; i++) {
@@ -187,15 +196,15 @@ function drawAllPepperoni() {
   /* DEBUG */
 }
 
-function drawPepperoni(x, y) {
+function drawPepperoni(x, y, i) {
   ctx.beginPath();
   ctx.arc(originX + x, originY + y, pepperoniRadius, 0, TAU);
-  ctx.fillStyle = pepperoniTrimColor;
+  ctx.fillStyle = pepperoniColors[i].dark;
   ctx.fill();
 
   ctx.beginPath();
   ctx.arc(originX + x, originY + y, pepperoniRadius * 0.9, 0, TAU);
-  ctx.fillStyle = pepperoniBaseColor;
+  ctx.fillStyle = pepperoniColors[i].light;
   ctx.fill();
 }
 
@@ -284,4 +293,67 @@ function fillPepperoni() {
   /* DEBUG */
 }
 
-resizeWindow();
+function getPepperoniColorPair() {
+  const red = { max: 200, min: 155, };
+  const green = { max: 50, min: 10, };
+  const blue = { max: 40, min: 0, };
+  
+  let rgb = [
+    Math.floor(Math.random() * (red.max - red.min)) + red.min,
+    Math.floor(Math.random() * (green.max - green.min)) + green.min,
+    Math.floor(Math.random() * (blue.max - blue.min)) + blue.min,
+  ];
+
+  return {
+    light: rgbToHex(rgb),
+    dark: rgbToHex(darkenRgb(rgb)),
+  };
+}
+
+function getRandomColorPair() {
+  const minValueLimit = 64;  // inclusive
+  const maxValueLimit = 256; // exclusive
+  const targetSaturation = 0.4;
+
+  let rgb = [];
+  let minValue = 0;
+  let maxValue = 0;
+  do {
+    rgb.length = 0;
+    for (let i = 0; i < 3; i++) {
+      rgb.push(Math.floor(Math.random() * (maxValueLimit - minValueLimit)) + minValueLimit);
+    }
+    minValue = Math.min(...rgb);
+    maxValue = Math.max(...rgb);
+  } while ((maxValue - minValue) / maxValue < targetSaturation); // TODO - generate needed saturation instead of bogosorting
+
+  // bias red to compensate for contrast against the orange pizza, which makes colors appear bluer
+  if (0 < rgb.indexOf(maxValue) && Math.random() < 0.25) {
+    rgb[rgb.indexOf(maxValue)] = rgb[0];
+    rgb[0] = maxValue;
+  }
+  
+  return {
+    light: rgbToHex(rgb),
+    dark: rgbToHex(darkenRgb(rgb)),
+  }
+}
+
+function rgbToHex(rgb) {
+  let hex = "#";
+  rgb.forEach(component => {
+    if (component < 16) {
+      hex += "0";
+    }
+    hex += Math.floor(component).toString(16);
+  });
+  return hex;
+}
+
+function darkenRgb(rgb) {
+  let darkRgb = [];
+  rgb.forEach(component => {
+    darkRgb.push(Math.floor(component * 0.75));
+  });
+  return darkRgb;
+}

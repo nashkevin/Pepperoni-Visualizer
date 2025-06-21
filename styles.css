@@ -1,10 +1,14 @@
-:root {
+/* :root {
   --user-primary-color: #2B2A33;
   --user-secondary-color: #FBFBFE;
   --user-tertiary-color: #42414D;
-}
 
-/* @media (prefers-color-scheme: dark) {
+  --user-primary-color: #FBFBFE;
+  --user-secondary-color: #2B2A33;
+  --user-tertiary-color: #E4E4E4;
+} */
+
+@media (prefers-color-scheme: dark) {
   :root {
     --user-primary-color: #2B2A33;
     --user-secondary-color: #FBFBFE;
@@ -13,11 +17,11 @@
 }
 @media (prefers-color-scheme: light) {
   :root {
-      --user-primary-color: #FBFBFE;
-      --user-secondary-color: #2B2A33;
-      --user-tertiary-color: #E4E4E4;
+      --user-primary-color: #E5F5FF;    /* page background */
+      --user-secondary-color: #3C464C;  /* title */
+      --user-tertiary-color: #ABC9DB;   /* header background, canvas border, value boxes */
   }
-} */
+}
 
 body {
   background-color: var(--user-primary-color);
@@ -52,6 +56,12 @@ button {
   background: none;
   border: none;
   font-size: 1em;
+  cursor: pointer;
+  transition-duration: 300ms;
+}
+
+button:hover {
+  font-size: 1.1em;
 }
 
 .grid-container {

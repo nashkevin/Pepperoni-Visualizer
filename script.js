@@ -20,8 +20,8 @@ const ctx = canvas.getContext("2d");
 var isFunMode = false;
 var isDebugMode = false;
 
-const pizzaBaseColor     = "#FCBD50";
-const pizzaCrustColor    = "#DA7E1F";
+const pizzaBaseColor  = "#FCBD50";
+const pizzaCrustColor = "#DA7E1F";
 
 const TAU = 2 * Math.PI;
 
@@ -101,6 +101,10 @@ var pepperoniRadius;
 var pepperoniCount;
 var preferredPepperoniCount;
 var points = [];
+/**
+ * allows colors to be assigned in the same order,
+ * which gives a better sense of continuity than random
+ */
 var pepperoniColors = [];
 
 function init() {
@@ -119,8 +123,8 @@ function pizzaSizeInput() {
   updateCountDisplay();
 }
 
-// special handler for clicks because clamping may prevent input,
-// masking user intent
+// special handler for clicks because the slider cap can
+// potentially mask user intent
 function pepperoniCountClick() {
   preferredPepperoniCount = pepperoniCountHtml.valueAsNumber;
 }
@@ -155,7 +159,7 @@ function populateColors() {
 }
 
 
-// TODO - this no longer handles most cases, revise clamping
+// TODO - normalize units and clarify formulae, adjust to have max count be a round number
 function updateDependentVars() {
   pizzaRadius = canvas.width * pizzaSizeHtml.valueAsNumber * 0.9;
   pizzaSizeBoxHtml.value = Math.round(pizzaSizeHtml.valueAsNumber * 40 * 10) / 10;
@@ -165,12 +169,6 @@ function updateDependentVars() {
 }
 
 function updateCountDisplay() {
-  // TODO - allowing off-by-one here is cheating, need to figure out source of discrepancy
-  // if (2 < pepperoniCountHtml.valueAsNumber - points.length) {
-  //   pepperoniCountBoxHtml.value = pepperoniCountHtml.valueAsNumber + " (" + points.length + ")";
-  // } else {
-  //   pepperoniCountBoxHtml.value = points.length;
-  // }
   pepperoniCountBoxHtml.value = points.length;
   pepperoniCountHtml.value = points.length;
 }
@@ -183,19 +181,36 @@ function updateCount(n) {
 
 function drawPizza() {
   points = [];
+  // realistic crust does not scale linearly
+  // these parameters I arrived at are magic to me though
+  let crustRadius = pizzaRadius + pizzaRadius * 0.2 * (1.5 - pizzaSizeHtml.value / pizzaSizeHtml.max);
+  // slight visual buffer between crust and pepperoni
+  let baseRadius = pizzaRadius * 1.02;
+
+  if (isFunMode) {
+    ctx.filter = "saturate(150%)"
+  } else {
+    ctx.filter = "saturate(100%)";
+    ctx.filter = "";
+  }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  ctx.globalAlpha = 0.2;
   ctx.beginPath();
-  // realistic crust does not scale linearly
-  // these parameters I arrived at are magic to me though
-  ctx.arc(originX, originY, pizzaRadius + pizzaRadius * 0.2 * (1.5 - pizzaSizeHtml.value / pizzaSizeHtml.max), 0, TAU);
-  ctx.fillStyle = pizzaCrustColor;
+  ctx.arc(originX * 1.04, originY * 1.04, crustRadius, 0, TAU);
+  ctx.fillStyle = "black";
+  ctx.fill();
+  ctx.globalAlpha = 1.0;
+
+  ctx.beginPath();
+  ctx.arc(originX, originY, crustRadius, 0, TAU);
+  ctx.fillStyle = isFunMode ? " #B0B0B0" : pizzaCrustColor; // maybe pastel pink + cream instead of grays...
   ctx.fill();
 
   ctx.beginPath();
-  ctx.arc(originX, originY, pizzaRadius * 1.02, 0, TAU); // slight visual buffer between crust and pepperoni
-  ctx.fillStyle = pizzaBaseColor;
+  ctx.arc(originX, originY, baseRadius, 0, TAU);
+  ctx.fillStyle = isFunMode ? " #DCDCDC" : pizzaBaseColor;
   ctx.fill();
 
   drawAllPepperoni();
@@ -355,12 +370,6 @@ function getRandomColorPair() {
     minValue = Math.min(...rgb);
     maxValue = Math.max(...rgb);
   } while ((maxValue - minValue) / maxValue < targetSaturation); // TODO - generate needed saturation instead of bogosorting
-
-  // bias red to compensate for contrast against the orange pizza, which makes colors appear bluer
-  if (0 < rgb.indexOf(maxValue) && Math.random() < 0.25) {
-    rgb[rgb.indexOf(maxValue)] = rgb[0];
-    rgb[0] = maxValue;
-  }
   
   return {
     light: rgbToHex(rgb),
